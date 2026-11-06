@@ -18,7 +18,7 @@ Open the Aspire dashboard URL printed in the terminal and follow the **webfronte
 - `BlazorDashboard.Web/Components/Pages/Home.razor` contains the overview, including sample metrics, revenue, fulfillment, and filterable orders.
 - `BlazorDashboard.Web/Components/Dashboard/MetricCard.razor` is a reusable KPI card.
 
-The overview uses illustrative data defined in the page. The Weather API page demonstrates fetching data from a service discovered through Aspire.
+The overview uses illustrative data from `BlazorDashboard.Web/Components/Dashboard/OverviewSampleData.cs`. The Weather API page demonstrates fetching data from a service discovered through Aspire.
 
 ## Run the smoke test
 

@@ -2,7 +2,12 @@
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 
+@using System.Text.Json
+@using Polly.CircuitBreaker
+@using Polly.Timeout
+
 @inject WeatherApiClient WeatherApi
+@inject ILogger<Weather> Logger
 
 <PageTitle>Weather</PageTitle>
 
@@ -10,7 +15,11 @@
 
 <p>This component demonstrates showing data loaded from a backend API service.</p>
 
-@if (forecasts == null)
+@if (loadFailed)
+{
+    <p class="alert alert-warning" role="alert">Weather forecasts are temporarily unavailable. Reload the page to try again.</p>
+}
+else if (forecasts is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -41,9 +50,19 @@ else
 
 @code {
     private WeatherForecast[]? forecasts;
+    private bool loadFailed;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await WeatherApi.GetWeatherAsync();
+        try
+        {
+            forecasts = await WeatherApi.GetWeatherAsync();
+        }
+        catch (Exception exception) when (exception is HttpRequestException or JsonException
+            or TimeoutRejectedException or BrokenCircuitException or OperationCanceledException)
+        {
+            Logger.LogWarning(exception, "Could not load the weather forecast.");
+            loadFailed = true;
+        }
     }
 }

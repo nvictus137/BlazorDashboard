@@ -1,40 +1,34 @@
 using Microsoft.Extensions.Logging;
 
+[assembly: CaptureConsole]
+
 namespace BlazorDashboard.Tests;
 
 public class WebTests
 {
-    private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
+    private static readonly TimeSpan TestTimeout = TimeSpan.FromMinutes(1);
 
     [Fact]
-    public async Task GetWebResourceRootReturnsOkStatusCode()
+    public async Task DashboardAndWeatherRenderThroughAspire()
     {
-        // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        timeout.CancelAfter(TestTimeout);
+        var cancellationToken = timeout.Token;
 
         var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.BlazorDashboard_AppHost>(cancellationToken);
-        appHost.Services.AddLogging(logging =>
-        {
-            logging.SetMinimumLevel(LogLevel.Debug);
-            // Override the logging filters from the app's configuration
-            logging.AddFilter(appHost.Environment.ApplicationName, LogLevel.Debug);
-            logging.AddFilter("Aspire.", LogLevel.Debug);
-            // To output logs to the xUnit.net ITestOutputHelper, consider adding a package from https://www.nuget.org/packages?q=xunit+logging
-        });
-        appHost.Services.ConfigureHttpClientDefaults(clientBuilder =>
-        {
-            clientBuilder.AddStandardResilienceHandler();
-        });
+        appHost.Services.AddLogging(logging => logging.AddSimpleConsole());
 
-        await using var app = await appHost.BuildAsync(cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
-        await app.StartAsync(cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
+        await using var app = await appHost.BuildAsync(cancellationToken);
+        await app.StartAsync(cancellationToken);
+        await app.ResourceNotifications.WaitForResourceHealthyAsync("webfrontend", cancellationToken);
 
-        // Act
-        var httpClient = app.CreateHttpClient("webfrontend");
-        await app.ResourceNotifications.WaitForResourceHealthyAsync("webfrontend", cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
-        var response = await httpClient.GetAsync("/", cancellationToken);
+        using var httpClient = app.CreateHttpClient("webfrontend");
+        using var dashboard = await httpClient.GetAsync("/", cancellationToken);
+        Assert.Equal(HttpStatusCode.OK, dashboard.StatusCode);
+        Assert.Contains("Dashboard overview", await dashboard.Content.ReadAsStringAsync(cancellationToken));
 
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var weather = await httpClient.GetAsync("/weather", cancellationToken);
+        Assert.Equal(HttpStatusCode.OK, weather.StatusCode);
+        Assert.Contains("Temperature in Celsius", await weather.Content.ReadAsStringAsync(cancellationToken));
     }
 }
