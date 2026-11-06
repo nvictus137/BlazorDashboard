@@ -1,0 +1,16 @@
+<article class="metric-card">
+    <h2>@Label</h2>
+    <p class="metric-value">@Value</p>
+    <p class="metric-context"><strong>@Change</strong> vs. prior week</p>
+</article>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = "";
+
+    [Parameter, EditorRequired]
+    public string Value { get; set; } = "";
+
+    [Parameter, EditorRequired]
+    public string Change { get; set; } = "";
+}

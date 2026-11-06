@@ -1,0 +1,35 @@
+<div class="brand-row">
+    <a id="dashboard-sidebar-title" class="brand" href="" data-enhance-nav="false">
+        <span class="brand-mark" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M5 18v-5m7 5V6m7 12v-9" />
+            </svg>
+        </span>
+        BlazorDashboard
+    </a>
+    <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas"
+            data-bs-target="#dashboard-sidebar" aria-label="Close navigation"></button>
+</div>
+
+<nav class="sidebar-nav" aria-label="Main navigation">
+    <p class="nav-section">Workspace</p>
+    <NavLink class="dashboard-link" href="" Match="NavLinkMatch.All" data-enhance-nav="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+        Overview
+    </NavLink>
+
+    <p class="nav-section">Examples</p>
+    <NavLink class="dashboard-link" href="counter" data-enhance-nav="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M6 15l4-5 4 3 4-7" /></svg>
+        Interactive counter
+    </NavLink>
+    <NavLink class="dashboard-link" href="weather" data-enhance-nav="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 18a4.5 4.5 0 1 1 .7-9A6 6 0 0 1 19 11a3.5 3.5 0 0 1-.5 7z" /></svg>
+        Weather API
+    </NavLink>
+</nav>

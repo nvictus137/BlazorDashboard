@@ -1,0 +1,139 @@
+@page "/"
+@rendermode InteractiveServer
+@using BlazorDashboard.Web.Components.Dashboard
+
+@{ var filteredOrders = FilteredOrders; }
+
+<PageTitle>Overview | BlazorDashboard</PageTitle>
+
+<header class="overview-heading">
+    <p class="eyebrow">Workspace / Overview</p>
+    <h1>Dashboard overview</h1>
+    <p class="overview-subtitle">Track revenue, orders, and fulfillment at a glance.</p>
+</header>
+
+<section class="metric-grid" aria-label="Key metrics">
+    <MetricCard Label="Revenue" Value="$48,290" Change="+12.4%" />
+    <MetricCard Label="Orders" Value="1,248" Change="+8.2%" />
+    <MetricCard Label="New customers" Value="386" Change="+5.1%" />
+    <MetricCard Label="Conversion rate" Value="3.64%" Change="+0.6 pp" />
+</section>
+
+<div class="overview-grid">
+    <section class="dashboard-panel" aria-labelledby="revenue-heading">
+        <header class="panel-heading">
+            <div>
+                <h2 id="revenue-heading">Revenue trend</h2>
+                <p>Revenue over the last seven days</p>
+            </div>
+            <span class="panel-tag">USD</span>
+        </header>
+        <ul class="revenue-chart" aria-label="Daily revenue" role="list">
+            @foreach (var day in WeeklyRevenue)
+            {
+                var dayLabel = $"{day.Name}: ${day.Amount:N0}";
+                <li class="chart-column" title="@dayLabel">
+                    <span class="visually-hidden">@dayLabel</span>
+                    <div class="bar-track" aria-hidden="true">
+                        <span class="bar-value" style="--bar-height: @(day.Amount / 100)%"></span>
+                    </div>
+                    <span class="bar-label" aria-hidden="true">@day.Name</span>
+                </li>
+            }
+        </ul>
+        <p class="chart-note">Daily scale · $0 to $10,000</p>
+    </section>
+
+    <section class="dashboard-panel" aria-labelledby="fulfillment-heading">
+        <header class="panel-heading">
+            <div>
+                <h2 id="fulfillment-heading">Order fulfillment</h2>
+                <p>Status across the sample orders</p>
+            </div>
+        </header>
+        <ul class="fulfillment-list" role="list">
+            @foreach (var status in OrderStatuses)
+            {
+                var count = RecentOrders.Count(order => order.Status == status);
+                <li>
+                    <div class="fulfillment-label">
+                        <span>@status</span>
+                        <strong>@count / @RecentOrders.Length</strong>
+                    </div>
+                    <progress class="fulfillment-progress @status.ToLowerInvariant()" value="@count"
+                              max="@RecentOrders.Length" aria-label="@status orders"></progress>
+                </li>
+            }
+        </ul>
+    </section>
+</div>
+
+<section class="dashboard-panel" aria-labelledby="orders-heading">
+    <header class="panel-heading">
+        <div>
+            <h2 id="orders-heading">Recent orders</h2>
+            <p>Example transactions from the demo workspace</p>
+        </div>
+        <div>
+            <label class="visually-hidden" for="order-status">Filter orders by status</label>
+            <select id="order-status" class="form-select form-select-sm" @bind="SelectedStatus">
+                <option value="">All statuses</option>
+                @foreach (var status in OrderStatuses)
+                {
+                    <option value="@status">@status</option>
+                }
+            </select>
+        </div>
+    </header>
+    <div class="table-responsive" tabindex="0" role="region" aria-labelledby="orders-heading">
+        <table class="table order-table align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Order</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="text-end">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in filteredOrders)
+                {
+                    <tr @key="order.Id">
+                        <th scope="row">@order.Id</th>
+                        <td>@order.Customer</td>
+                        <td><span class="order-status @order.Status.ToLowerInvariant()">@order.Status</span></td>
+                        <td class="text-end">$@order.Total.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="orders-count" role="status">@filteredOrders.Length of @RecentOrders.Length orders shown</p>
+</section>
+
+@code {
+    private static readonly (string Name, int Amount)[] WeeklyRevenue =
+    [
+        ("Mon", 4800), ("Tue", 6100), ("Wed", 5620), ("Thu", 7350),
+        ("Fri", 6880), ("Sat", 8900), ("Sun", 8640)
+    ];
+
+    private static readonly string[] OrderStatuses = ["Completed", "Processing", "Pending"];
+
+    private static readonly SampleOrder[] RecentOrders =
+    [
+        new("#1048", "Northstar Studio", "Completed", 324.00m),
+        new("#1047", "Oak & Finch", "Processing", 185.50m),
+        new("#1046", "Harbor Supply", "Completed", 620.00m),
+        new("#1045", "Juniper Labs", "Pending", 92.40m),
+        new("#1044", "Summit Works", "Completed", 248.00m)
+    ];
+
+    private string SelectedStatus { get; set; } = "";
+
+    private SampleOrder[] FilteredOrders => SelectedStatus.Length == 0
+        ? RecentOrders
+        : Array.FindAll(RecentOrders, order => order.Status == SelectedStatus);
+
+    private sealed record SampleOrder(string Id, string Customer, string Status, decimal Total);
+}

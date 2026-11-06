@@ -1,0 +1,33 @@
+.metric-card {
+    min-width: 0;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--dashboard-border);
+    border-top: .2rem solid var(--dashboard-accent);
+    border-radius: .85rem;
+    background: var(--dashboard-surface);
+}
+
+.metric-card h2 {
+    margin: 0;
+    color: var(--dashboard-muted);
+    font-size: .85rem;
+    font-weight: 650;
+}
+
+.metric-value {
+    margin: .45rem 0;
+    font-size: 1.85rem;
+    font-weight: 750;
+    letter-spacing: -.045em;
+}
+
+.metric-context {
+    margin: 0;
+    color: var(--dashboard-muted);
+    font-size: .75rem;
+}
+
+.metric-context strong {
+    margin-right: .15rem;
+    color: #226a50;
+}

@@ -1,0 +1,115 @@
+.dashboard-shell {
+    --dashboard-ink: #171e36;
+    --dashboard-muted: #59647c;
+    --dashboard-border: #e1e6f0;
+    --dashboard-surface: #fff;
+    --dashboard-accent: #5648c6;
+    min-height: 100vh;
+    color: var(--dashboard-ink);
+    background: #f5f7fb;
+}
+
+.dashboard-sidebar {
+    --bs-offcanvas-width: min(18rem, 88vw);
+    --bs-offcanvas-bg: #141b31;
+    --bs-offcanvas-color: #edf0fb;
+    overflow-y: auto;
+}
+
+.dashboard-workspace {
+    min-width: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-topbar, .dashboard-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: 1rem clamp(1rem, 3vw, 2.5rem);
+    background: var(--dashboard-surface);
+}
+
+.dashboard-topbar {
+    min-height: 4.5rem;
+    border-bottom: 1px solid var(--dashboard-border);
+}
+
+.workspace-title {
+    font-size: .875rem;
+    font-weight: 650;
+}
+
+.workspace-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .35rem .65rem;
+    color: #2d6456;
+    background: #e6f5ee;
+    border-radius: 1rem;
+    font-size: .75rem;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.workspace-badge span {
+    width: .4rem;
+    height: .4rem;
+    border-radius: 50%;
+    background: #237c5d;
+}
+
+.dashboard-main {
+    flex: 1;
+    width: 100%;
+    max-width: 100rem;
+    margin-inline: auto;
+    padding: clamp(1.25rem, 3vw, 2.5rem) clamp(1rem, 3vw, 2.5rem);
+}
+
+.dashboard-footer {
+    border-top: 1px solid var(--dashboard-border);
+    color: var(--dashboard-muted);
+    font-size: .8rem;
+}
+
+.skip-link {
+    position: absolute;
+    z-index: 1050;
+    padding: .5rem 1rem;
+    background: #fff;
+}
+
+#blazor-error-ui {
+    display: none;
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 1100;
+    padding: 1rem 3rem 1rem 1rem;
+    color: #4c3200;
+    background: #fff1c2;
+}
+
+#blazor-error-ui .dismiss {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+@media (min-width: 992px) {
+    .dashboard-shell {
+        display: grid;
+        grid-template-columns: 15.5rem minmax(0, 1fr);
+    }
+
+    .dashboard-sidebar {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        height: 100vh;
+        background-color: #141b31 !important;
+    }
+}
