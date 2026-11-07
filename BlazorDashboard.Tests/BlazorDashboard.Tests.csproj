@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlazorDashboard.AppHost\BlazorDashboard.AppHost.csproj" />
+    <ProjectReference Include="..\BlazorDashboard.Data\BlazorDashboard.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -14,3 +14,15 @@ dotnet test .\BlazorDashboard.Tests
 2. Filter orders by status, then select **All statuses** and verify the full table returns.
 3. At a narrow viewport, open the navigation drawer and navigate to the Counter page. Verify the button updates the count.
 4. Open the Weather page and verify the forecast table renders with the API running.
+
+## SQLite persistence
+
+Run the database regression test independently of Aspire startup.
+
+```powershell
+dotnet test .\BlazorDashboard.Tests --filter FullyQualifiedName~DataTests
+```
+
+The test migrates a temporary SQLite file, verifies the five seeded orders, saves an additional order, and reopens the database. Reapplying migrations must preserve all six orders and the saved decimal total.
+
+With the standalone API running, open `http://localhost:5559/orders` to query persisted orders. The database setting and migration commands are documented in [configuration.md](configuration.md).

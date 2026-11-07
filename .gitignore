@@ -59,3 +59,10 @@ nunit-*.xml
 
 .vs/
 *.csproj.user
+
+# Local SQLite databases
+App_Data/
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
