@@ -12,6 +12,22 @@ dotnet run --project .\BlazorDashboard.AppHost
 
 Open the Aspire dashboard URL printed in the terminal and follow the **webfrontend** endpoint to the app. The AppHost also starts **apiservice** for the Weather API example.
 
+## Run the projects directly
+
+To open the Blazor dashboard while investigating Aspire startup, start the API from the repository root in one terminal.
+
+```powershell
+dotnet run --project .\BlazorDashboard.ApiService --launch-profile http
+```
+
+In a second terminal, start the frontend with its standalone profile.
+
+```powershell
+dotnet run --project .\BlazorDashboard.Web --launch-profile standalone
+```
+
+Open [the Blazor dashboard](http://localhost:5096/). The standalone profile supplies the local API address for the Weather page. In Visual Studio, start the API with its `http` profile, then start the Web project with its `standalone` profile.
+
 ## Customize the template
 
 - `BlazorDashboard.Web/Components/Layout` contains the shared shell and sidebar navigation.
