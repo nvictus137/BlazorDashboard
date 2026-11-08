@@ -15,14 +15,12 @@ dotnet test .\BlazorDashboard.Tests
 3. At a narrow viewport, open the navigation drawer and navigate to the Counter page. Verify the button updates the count.
 4. Open the Weather page and verify the forecast table renders with the API running.
 
-## SQLite persistence
+## SQL Server orders
 
-Run the database regression test independently of Aspire startup.
+Publish the DACPAC to a dedicated SQL Server test database with `SeedSampleOrders=true`. Set `DashboardTestConnectionString` to its connection string, then run the database test independently of Aspire startup.
 
 ```powershell
 dotnet test .\BlazorDashboard.Tests --filter FullyQualifiedName~DataTests
 ```
 
-The test migrates a temporary SQLite file, verifies the five seeded orders, saves an additional order, and reopens the database. Reapplying migrations must preserve all six orders and the saved decimal total.
-
-With the standalone API running, open `http://localhost:5559/orders` to query persisted orders. The database setting and migration commands are documented in [configuration.md](configuration.md).
+The test checks the order, amount, and customer data returned by the stored procedure. With the standalone API running, open `http://localhost:5559/orders` to query persisted orders.

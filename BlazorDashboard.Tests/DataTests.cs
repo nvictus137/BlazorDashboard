@@ -1,5 +1,4 @@
 using BlazorDashboard.Data;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorDashboard.Tests;
@@ -7,45 +6,18 @@ namespace BlazorDashboard.Tests;
 public class DataTests
 {
     [Fact]
-    public async Task MigrationsPreserveSavedOrdersWhenAppliedAgain()
+    public async Task GetOrdersReadsSeededOrdersFromSqlServer()
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-        var databasePath = Path.Combine(Path.GetTempPath(), $"dashboard-{Guid.NewGuid():N}.db");
-        var connectionString = new SqliteConnectionStringBuilder
-        {
-            DataSource = databasePath,
-            Pooling = false
-        }.ToString();
-        var options = new DbContextOptionsBuilder<DashboardDbContext>().UseSqlite(connectionString).Options;
+        var connectionString = Environment.GetEnvironmentVariable("DashboardTestConnectionString");
+        Assert.SkipWhen(string.IsNullOrWhiteSpace(connectionString),
+            "Set DashboardTestConnectionString to a seeded SQL Server test database.");
 
-        try
-        {
-            await using (var database = new DashboardDbContext(options))
-            {
-                await database.Database.MigrateAsync(cancellationToken);
-                Assert.Equal(5, await database.Orders.CountAsync(cancellationToken));
-                database.Orders.Add(new DashboardOrder
-                {
-                    Id = "#test",
-                    Customer = "Persistence test",
-                    Status = "Pending",
-                    Total = 12.34m
-                });
-                await database.SaveChangesAsync(cancellationToken);
-            }
+        var options = new DbContextOptionsBuilder<DashboardDbContext>().UseSqlServer(connectionString).Options;
+        await using var database = new DashboardDbContext(options);
+        var orders = await database.GetOrdersAsync(TestContext.Current.CancellationToken);
 
-            await using (var database = new DashboardDbContext(options))
-            {
-                await database.Database.MigrateAsync(cancellationToken);
-                Assert.Empty(await database.Database.GetPendingMigrationsAsync(cancellationToken));
-                var savedOrder = await database.Orders.SingleAsync(order => order.Id == "#test", cancellationToken);
-                Assert.Equal(12.34m, savedOrder.Total);
-                Assert.Equal(6, await database.Orders.CountAsync(cancellationToken));
-            }
-        }
-        finally
-        {
-            File.Delete(databasePath);
-        }
+        Assert.Equal(["#1048", "#1047", "#1046", "#1045", "#1044"], orders.Select(order => order.Id));
+        Assert.Equal(185.50m, orders[1].Total);
+        Assert.Equal("Oak & Finch", orders[1].Customer);
     }
 }

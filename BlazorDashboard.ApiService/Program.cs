@@ -1,5 +1,4 @@
 using BlazorDashboard.Data;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,12 +12,9 @@ builder.Services.AddProblemDetails();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-var databasePath = Path.GetFullPath(
-    builder.Configuration["Database:Path"] ?? "App_Data/dashboard.db",
-    builder.Environment.ContentRootPath);
-Directory.CreateDirectory(Path.GetDirectoryName(databasePath)!);
-var connectionString = new SqliteConnectionStringBuilder { DataSource = databasePath }.ToString();
-builder.Services.AddDbContext<DashboardDbContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<DashboardDbContext>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("Dashboard")
+    ?? throw new InvalidOperationException("Configure the Dashboard SQL Server connection string.")));
 
 var app = builder.Build();
 
@@ -27,9 +23,6 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-    using var scope = app.Services.CreateScope();
-    var database = scope.ServiceProvider.GetRequiredService<DashboardDbContext>();
-    await database.Database.MigrateAsync();
     app.MapOpenApi();
 }
 
@@ -51,10 +44,8 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-app.MapGet("/orders", async (DashboardDbContext database, CancellationToken cancellationToken) =>
-    await database.Orders.AsNoTracking()
-        .OrderByDescending(order => order.Id)
-        .ToArrayAsync(cancellationToken))
+app.MapGet("/orders", (DashboardDbContext database, CancellationToken cancellationToken) =>
+    database.GetOrdersAsync(cancellationToken))
     .WithName("GetOrders");
 
 app.MapDefaultEndpoints();
