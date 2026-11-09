@@ -1,6 +1,6 @@
-namespace Blazor.AdminLte.Security.Abstractions.Models.Accounts;
-
 using System.ComponentModel.DataAnnotations;
+
+namespace BlazorDashboard.Shared.Models.Accounts;
 
 public class ValidateResetTokenRequest
 {

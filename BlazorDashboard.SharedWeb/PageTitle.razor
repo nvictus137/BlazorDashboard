@@ -1,25 +1,14 @@
-﻿@using Microsoft.JSInterop
-@inject IJSRuntime JS
+<Microsoft.AspNetCore.Components.Web.PageTitle>@Title</Microsoft.AspNetCore.Components.Web.PageTitle>
+
 @if (!Hidden)
 {
     @Title
 }
+
 @code {
     [Parameter]
-    public string Title { get; set; }
+    public string Title { get; set; } = "";
+
     [Parameter]
-    public bool Hidden { get; set; } = false;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await setTitle().ConfigureAwait(false);
-        }
-    }
-
-    private async Task setTitle()
-    {
-        await JS.InvokeVoidAsync("setTitle", Title).ConfigureAwait(false);
-    }
+    public bool Hidden { get; set; }
 }

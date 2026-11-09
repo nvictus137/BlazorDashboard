@@ -4,13 +4,23 @@ namespace BlazorDashboard.Shared.Layout;
 
 public class LayoutManager : ILayoutManager
 {
-    private bool _IsSideBarFixed;
-    private bool _IsNavBarFixed;
-    private bool _IsFooterFixed;
+    public bool IsSideBarFixed
+    {
+        get;
+        set { field = value; js.InvokeVoidAsync("sideBarFixed", value); }
+    }
 
-    public bool IsSideBarFixed { get { return _IsSideBarFixed; } set { _IsSideBarFixed = value; js.InvokeVoidAsync("sideBarFixed", value); } }
-    public bool IsNavBarFixed { get { return _IsNavBarFixed; } set { _IsNavBarFixed = value; js.InvokeVoidAsync("navBarFixed", value); } }
-    public bool IsFooterFixed { get { return _IsFooterFixed; } set { _IsFooterFixed = value; js.InvokeVoidAsync("footerFixed", value); } }
+    public bool IsNavBarFixed
+    {
+        get;
+        set { field = value; js.InvokeVoidAsync("navBarFixed", value); }
+    }
+
+    public bool IsFooterFixed
+    {
+        get;
+        set { field = value; js.InvokeVoidAsync("footerFixed", value); }
+    }
 
     private readonly IJSRuntime js;
 
@@ -28,8 +38,8 @@ public class LayoutManager : ILayoutManager
         }
         else
         {
-            js.InvokeVoidAsync("navBarFixed", _IsNavBarFixed);
-            js.InvokeVoidAsync("footerFixed", _IsFooterFixed);
+            js.InvokeVoidAsync("navBarFixed", IsNavBarFixed);
+            js.InvokeVoidAsync("footerFixed", IsFooterFixed);
         }
     }
 }

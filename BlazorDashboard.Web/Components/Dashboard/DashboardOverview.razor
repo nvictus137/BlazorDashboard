@@ -1,0 +1,147 @@
+@using System.Globalization
+@using static BlazorDashboard.Web.Components.Dashboard.OverviewSampleData
+
+@{ var filteredOrders = FilteredOrders; }
+
+<header class="overview-heading">
+    @if (Eyebrow is not null)
+    {
+        <p class="eyebrow">@Eyebrow</p>
+    }
+    <h1>@Title</h1>
+    @if (Subtitle is not null)
+    {
+        <p class="overview-subtitle">@Subtitle</p>
+    }
+</header>
+
+@if (Metrics is not null)
+{
+    <section class="metric-grid" aria-label="Key metrics">
+        @Metrics
+    </section>
+}
+else if (ShowRevenue)
+{
+    <section class="metric-grid" aria-label="Key metrics">
+        <MetricCard Label="Revenue" Value="@WeeklyRevenue.Sum(day => day.Amount).ToString("C0", UsCurrency)" Change="+12.4%" />
+        <MetricCard Label="Orders" Value="1,248" Change="+8.2%" />
+        <MetricCard Label="New customers" Value="386" Change="+5.1%" />
+        <MetricCard Label="Conversion rate" Value="3.64%" Change="+0.6 pp" />
+    </section>
+}
+
+@if (ShowRevenue)
+{
+    <div class="overview-grid">
+        <section class="dashboard-panel" aria-labelledby="revenue-heading">
+            <header class="panel-heading">
+                <div>
+                    <h2 id="revenue-heading">Revenue trend</h2>
+                    <p>Revenue over the last seven days</p>
+                </div>
+                <span class="panel-tag">USD</span>
+            </header>
+            <ul class="revenue-chart" aria-label="Daily revenue" role="list">
+                @foreach (var day in WeeklyRevenue)
+                {
+                    var dayLabel = $"{day.Name}: {day.Amount.ToString("C0", UsCurrency)}";
+                    var barStyle = FormattableString.Invariant($"--bar-height: {100m * day.Amount / RevenueAxisMax:0.##}%");
+                    <li class="chart-column" title="@dayLabel">
+                        <span class="visually-hidden">@dayLabel</span>
+                        <div class="bar-track" aria-hidden="true">
+                            <span class="bar-value" style="@barStyle"></span>
+                        </div>
+                        <span class="bar-label" aria-hidden="true">@day.Name</span>
+                    </li>
+                }
+            </ul>
+            <p class="chart-note">Daily scale · $0 to @RevenueAxisMax.ToString("C0", UsCurrency)</p>
+        </section>
+
+        <section class="dashboard-panel" aria-labelledby="fulfillment-heading">
+            <header class="panel-heading">
+                <div>
+                    <h2 id="fulfillment-heading">Order fulfillment</h2>
+                    <p>Status across the sample orders</p>
+                </div>
+            </header>
+            <ul class="fulfillment-list" role="list">
+                @foreach (var status in OrderStatuses)
+                {
+                    var count = RecentOrders.Count(order => order.Status == status);
+                    <li>
+                        <div class="fulfillment-label">
+                            <span>@status</span>
+                            <strong>@count / @RecentOrders.Count</strong>
+                        </div>
+                        <progress class="fulfillment-progress @status.ToLowerInvariant()" value="@count"
+                                  max="@RecentOrders.Count" aria-label="@status orders"></progress>
+                    </li>
+                }
+            </ul>
+        </section>
+    </div>
+}
+
+<section class="dashboard-panel" aria-labelledby="orders-heading">
+    <header class="panel-heading">
+        <div>
+            <h2 id="orders-heading">Recent orders</h2>
+            <p>Example transactions from the demo workspace</p>
+        </div>
+        <div>
+            <label class="visually-hidden" for="order-status">Filter orders by status</label>
+            <select id="order-status" class="form-select form-select-sm" @bind="SelectedStatus">
+                <option value="">All statuses</option>
+                @foreach (var status in OrderStatuses)
+                {
+                    <option value="@status">@status</option>
+                }
+            </select>
+        </div>
+    </header>
+    <div class="table-responsive" tabindex="0" role="region" aria-labelledby="orders-heading">
+        <table class="table order-table align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Order</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="text-end">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in filteredOrders)
+                {
+                    <tr @key="order.Id">
+                        <th scope="row">@order.Id</th>
+                        <td>@order.Customer</td>
+                        <td><span class="order-status @order.Status.ToLowerInvariant()">@order.Status</span></td>
+                        <td class="text-end">@order.Total.ToString("C2", UsCurrency)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="orders-count" role="status">@filteredOrders.Count of @RecentOrders.Count orders shown</p>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public string? Eyebrow { get; set; }
+    [Parameter] public string? Subtitle { get; set; }
+    [Parameter] public bool ShowRevenue { get; set; } = true;
+    [Parameter] public RenderFragment? Metrics { get; set; }
+
+    private const decimal RevenueGridStep = 2_500m;
+    private static readonly CultureInfo UsCurrency = CultureInfo.GetCultureInfo("en-US");
+    private static readonly decimal RevenueAxisMax = Math.Max(
+        RevenueGridStep, Math.Ceiling(WeeklyRevenue.Select(day => day.Amount).DefaultIfEmpty().Max() / RevenueGridStep) * RevenueGridStep);
+
+    private string SelectedStatus { get; set; } = "";
+
+    private IReadOnlyList<SampleOrder> FilteredOrders => SelectedStatus.Length == 0
+        ? RecentOrders
+        : RecentOrders.Where(order => order.Status == SelectedStatus).ToArray();
+}

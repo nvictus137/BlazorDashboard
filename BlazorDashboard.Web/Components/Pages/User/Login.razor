@@ -1,4 +1,4 @@
-﻿@page "/login"
+@page "/login"
 @using BlazorDashboard.Shared.Enumerations
 @using BlazorDashboard.Shared.Forms
 @using BlazorDashboard.SharedWeb.Forms
@@ -15,6 +15,7 @@
             <div class="card">
                 <div class="card-body login-card-body">
                     <p class="login-box-msg">Sign in to start your session</p>
+                    <p class="alert alert-info" role="status">Sign-in is currently unavailable.</p>
 @*                    <form action="../../index3.html" method="post">
 *@
                     <Input @bind-Value="email" />
@@ -27,7 +28,7 @@
                                     <CustomCheckbox @bind-Value="rememberMe" />
                             </div>
                             <div class="col-4">
-                                <Button Color="Color.Primary">Sign In</Button>
+                                <button class="btn btn-primary" type="button" disabled>Sign In</button>
                             </div>
 
                         </div>
