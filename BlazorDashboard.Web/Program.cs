@@ -36,7 +36,11 @@ app.Use(async (context, next) =>
 {
     await next(context).ConfigureAwait(false);
 
-    if (context.Response.StatusCode is not (StatusCodes.Status404NotFound or StatusCodes.Status500InternalServerError)
+    if (context.Response.StatusCode is not (StatusCodes.Status400BadRequest
+        or StatusCodes.Status401Unauthorized
+        or StatusCodes.Status403Forbidden
+        or StatusCodes.Status404NotFound
+        or StatusCodes.Status500InternalServerError)
         && context.Features.Get<IStatusCodePagesFeature>() is { } statusCodePages)
     {
         statusCodePages.Enabled = false;

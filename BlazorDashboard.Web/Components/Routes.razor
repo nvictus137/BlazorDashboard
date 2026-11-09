@@ -1,6 +1,15 @@
-﻿<Router AppAssembly="typeof(Program).Assembly">
+<Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <RouteView RouteData="routeData" DefaultLayout="GetDefaultLayout(routeData)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
+
+@code {
+    private static readonly string AdminPagePrefix = typeof(Pages.Admin.Dashboard).Namespace + ".";
+
+    private static Type GetDefaultLayout(RouteData routeData) =>
+        routeData.PageType.FullName?.StartsWith(AdminPagePrefix, StringComparison.Ordinal) == true
+            ? typeof(Layout.AdminLayout)
+            : typeof(Layout.MainLayout);
+}

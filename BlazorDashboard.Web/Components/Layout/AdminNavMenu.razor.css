@@ -1,0 +1,75 @@
+.brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    min-height: 4.5rem;
+    padding: .85rem 1rem;
+    border-bottom: 1px solid #303a54;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 750;
+    text-decoration: none;
+    letter-spacing: -.025em;
+}
+
+.brand-mark {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: .65rem;
+    background: #6c5be6;
+}
+
+.sidebar-nav {
+    padding: 0 .8rem 1rem;
+}
+
+.nav-section {
+    margin: 1.5rem .75rem .55rem;
+    color: #a3aec9;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.sidebar-nav ::deep .dashboard-link {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    margin-bottom: .25rem;
+    padding: .65rem .75rem;
+    border-radius: .5rem;
+    color: #dce3f6;
+    font-size: .875rem;
+    font-weight: 550;
+    text-decoration: none;
+}
+
+.sidebar-nav ::deep .dashboard-link:hover {
+    background: #252e48;
+}
+
+.sidebar-nav ::deep .dashboard-link.active {
+    background: #36316a;
+    color: #fff;
+}
+
+.sidebar-nav svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.65;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
