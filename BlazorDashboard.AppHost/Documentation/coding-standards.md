@@ -1,10 +1,10 @@
 # Coding standards
 
-Follow the conventions used in the existing C# and Razor files.
-
-- Use four spaces for indentation and keep nullable reference types enabled.
-- Use PascalCase for types and public members. Use camelCase for local variables and component fields.
-- Keep page markup in `.razor` files and component-specific styles in the matching `.razor.css` files.
-- Use typed HTTP clients for service calls and resolve API addresses through Aspire service discovery.
-- Give controls accessible labels and include visible loading and failure states on pages that fetch data.
-- Keep machine-specific Visual Studio files out of version control using the root [ignore rules](../../.gitignore).
+- Use four spaces for indentation. Use PascalCase for types and public members and camelCase for local variables and fields.
+- Keep nullable reference types enabled and represent optional services or content with nullable types.
+- Keep route components focused on route metadata, page titles, and page-specific content. Place repeated dashboard markup and scoped styles with the shared component.
+- Use Blazor's built-in `PageTitle` for browser titles. Use an interactive render mode on pages with Blazor event handlers, such as the orders filter.
+- Use typed HTTP clients for service calls and pass cancellation tokens through asynchronous API and database operations.
+- Await asynchronous event handlers. Render validation messages as text and label interactive controls.
+- Put tables and stored procedures in the SQL database project. Keep the EF model aligned with the published schema.
+- Keep machine-specific project settings and local database files out of Git. [Ignore rules](../../.gitignore)

@@ -1,0 +1,21 @@
+@namespace BlazorDashboard.SharedWeb.Layout
+
+<div id="overlay-container" style="height: 100%;
+        width: 100%;
+        position: absolute;
+        z-index: 1340;
+        top: 0;
+        left: 0;
+        overflow-y: auto;
+        overflow-x: auto;
+        background-color: #e9ecef
+">
+    <div class="overlay-content">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

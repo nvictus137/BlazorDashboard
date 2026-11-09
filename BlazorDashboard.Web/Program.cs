@@ -1,5 +1,6 @@
 using BlazorDashboard.Web;
 using BlazorDashboard.Web.Components;
+using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +24,24 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler("/500", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+app.UseStatusCodePagesWithReExecute("/{0}");
+app.Use(async (context, next) =>
+{
+    await next(context).ConfigureAwait(false);
+
+    if (context.Response.StatusCode is not (StatusCodes.Status404NotFound or StatusCodes.Status500InternalServerError)
+        && context.Features.Get<IStatusCodePagesFeature>() is { } statusCodePages)
+    {
+        statusCodePages.Enabled = false;
+    }
+});
 
 app.UseAntiforgery();
 

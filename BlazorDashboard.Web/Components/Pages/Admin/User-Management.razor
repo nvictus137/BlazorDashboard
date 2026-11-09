@@ -1,0 +1,13 @@
+@page "/Admin/Users"
+@rendermode InteractiveServer
+@using BlazorDashboard.Web.Components.Dashboard
+
+<PageTitle>User Management</PageTitle>
+
+<DashboardOverview Title="User Management" ShowRevenue="false">
+    <Metrics>
+        <MetricCard Label="Total Users" Value="100" Change="+12.4%" />
+        <MetricCard Label="Active Users" Value="75" Change="+8.2%" />
+        <MetricCard Label="Inactive Users" Value="25" Change="+5.1%" />
+    </Metrics>
+</DashboardOverview>

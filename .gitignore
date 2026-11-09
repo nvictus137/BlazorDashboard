@@ -59,6 +59,7 @@ nunit-*.xml
 
 .vs/
 *.csproj.user
+*.sqlproj.user
 
 # Local SQLite databases
 App_Data/
