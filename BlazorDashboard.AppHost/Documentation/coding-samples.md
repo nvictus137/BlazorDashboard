@@ -1,17 +1,28 @@
 # Coding samples
 
-## Add a KPI card
+## Reuse the dashboard overview
 
-Import the dashboard components namespace in a Razor page and pass the display values to `MetricCard`.
+Home and Admin render the sales overview and orders filter. The Users page supplies its own metrics and hides the sales summary.
 
 ```razor
+@rendermode InteractiveServer
 @using BlazorDashboard.Web.Components.Dashboard
 
-<MetricCard Label="Orders" Value="1,248" Change="+8.2%" />
+<PageTitle>User Management</PageTitle>
+
+<DashboardOverview Title="User Management" ShowRevenue="false">
+    <Metrics>
+        <MetricCard Label="Total Users" Value="100" Change="+12.4%" />
+    </Metrics>
+</DashboardOverview>
 ```
 
-The card implementation lives in [MetricCard.razor](../../BlazorDashboard.Web/Components/Dashboard/MetricCard.razor). See [Home.razor](../../BlazorDashboard.Web/Components/Pages/Home.razor) for a grid of cards and an example of deriving a display value from sample data.
+Keep styles for the overview beside the component. See the full [Users page](../../BlazorDashboard.Web/Components/Pages/Admin/User-Management.razor) and [DashboardOverview stylesheet](../../BlazorDashboard.Web/Components/Dashboard/DashboardOverview.razor.css).
 
-## Call an Aspire service
+## Call the API
 
-The [Weather page](../../BlazorDashboard.Web/Components/Pages/Weather.razor) injects [WeatherApiClient](../../BlazorDashboard.Web/WeatherApiClient.cs) and awaits `GetWeatherAsync()`. The page shows a loading state, a forecast table, or an error message. The API address is configured in [Web/Program.cs](../../BlazorDashboard.Web/Program.cs).
+The [Weather page](../../BlazorDashboard.Web/Components/Pages/Weather.razor) injects [WeatherApiClient](../../BlazorDashboard.Web/WeatherApiClient.cs) and displays loading, success, and failure states. Web startup configures the client with the Aspire service name `apiservice`. [Web startup](../../BlazorDashboard.Web/Program.cs)
+
+## Read SQL Server orders
+
+The API injects the scoped `DashboardDbContext`, then forwards the request's cancellation token to `GetOrdersAsync`. The context calls `dbo.GetOrders` and materializes read-only results. [API endpoint](../../BlazorDashboard.ApiService/Program.cs) · [Data context](../../BlazorDashboard.Data/DashboardDbContext.cs)
